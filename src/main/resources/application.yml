@@ -48,6 +48,8 @@ spring:
         uri: lb://SHIPPING-SERVICE
         predicates:
         - Path=/shipping-service/**
+        filters:
+        - CircuitBreaker=shippingServiceCircuitBreaker
       - id: USER-SERVICE
         uri: lb://USER-SERVICE
         predicates:
@@ -56,6 +58,8 @@ spring:
         uri: lb://FAVOURITE-SERVICE
         predicates:
         - Path=/favourite-service/**
+        filters:
+        - CircuitBreaker=favouriteServiceCircuitBreaker
       - id: PROXY-CLIENT
         uri: lb://PROXY-CLIENT
         predicates:
@@ -73,6 +77,22 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 3
         sliding-window-size: 10
         wait-duration-in-open-state: 5s
+        sliding-window-type: COUNT_BASED
+      shippingServiceCircuitBreaker:
+        register-health-indicator: true
+        automatic-transition-from-open-to-half-open-enabled: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 3
+        sliding-window-size: 10
+        wait-duration-in-open-state: 10s
+        sliding-window-type: COUNT_BASED
+      favouriteServiceCircuitBreaker:
+        register-health-indicator: true
+        automatic-transition-from-open-to-half-open-enabled: true
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 3
+        sliding-window-size: 10
+        wait-duration-in-open-state: 10s
         sliding-window-type: COUNT_BASED
 
 management:
